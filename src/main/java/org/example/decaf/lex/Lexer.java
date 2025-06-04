@@ -34,41 +34,100 @@ public class Lexer {
     private void scanToken() {
         currChar = advance()
 
-        switch (currChar) {
-            case ' ':
-            case '\t':
-            case '\r':
-                break; // all of those cases go the break statement
-            case '\n':
-                current++;
-            case '(':
-                addToken(TokenType.LEFT_PARENTHESIS);
-                break;
-            case ')':
-                addToken(TokenType.RIGHT_PARENTHESIS);
-            case '{':
-                addToken(TokenType.LEFT_BRACE);
-            case '}':
-                addToken(TokenType.RIGHT_BRACE);
-            case ';':
-                addToken(TokenType.SEMICOLON);
-            case '+':
-                addToken(TokenType.PLUS);
-            case '-':
-                addToken(TokenType.MINUS);
-            case '*':
-                addToken(TokenType.STAR);
-            case '/':
-                addToken(TokenType.SLASH);
-            case '%':
-                addToken(TokenType.MODULO);
-
-
+        if (Character.isDigit(currChar)) {
+            String digits = getAllInt();
+            addToken(TokenType.INT_LITERAL, digits);
+            return;
+        } else if (currChar == '"') {
+            // dealing with a string literal
+            String litral = getString();
+            addToken(TokenType.STRING_LITERAL, literal);
+            return;
         }
+
+        else if (Character.isLetter(currChar) || currChar == '_') {
+            // dealing with an IDENTIFIER (variable/function name)
+            String identifierName = getIdentifier();
+            addToken(TokenType.STRING_LITERAL, identifierName);
+            return;
+        } else {
+            switch (currChar) {
+                case ' ':
+                case '\t':
+                case '\r':
+                    break; // all of those cases go the break statement
+                case '\n':
+                    current++;
+                case '(':
+                    addToken(TokenType.LEFT_PARENTHESIS);
+                    break;
+                case ')':
+                    addToken(TokenType.RIGHT_PARENTHESIS);
+                    break;
+                case '{':
+                    addToken(TokenType.LEFT_BRACE);
+                    break;
+                case '}':
+                    addToken(TokenType.RIGHT_BRACE);
+                    break;
+                case ';':
+                    addToken(TokenType.SEMICOLON);
+                    break;
+                case '+':
+                    addToken(TokenType.PLUS);
+                    break;
+                case '-':
+                    addToken(TokenType.MINUS);
+                    break;
+                case '*':
+                    addToken(TokenType.STAR);
+                    break;
+                case '/':
+                    addToken(TokenType.SLASH);
+                    break;
+                case '%':
+                    addToken(TokenType.MODULO);
+                    break;
+                    }
+                }
+    }
+
+    private String getInt() {
+        int counter = current;
+        String currDigits = "" + source.charAt(current);
+        while (!isAtEnd() && Character.isDigit(source.charAt(counter + 1))) {
+            currDigits += source.charAt(counter + 1);
+            counter++;
+        }
+        current = counter + 1; // done with digits
+    }
+    private String getString() {
+        String currString = '' + source.charAt(current);
+        while (!isAtEnd() && peek() != '"') {
+            if (peek() == '\n') {
+                line++;
+            }
+           currString += advance();
+        }
+        currString += advance() // add the closing "
+        return currString;
+    }
+    private String getIdentifier() {
+        String currIdentifier = '' + source.charAt(current);
+
+        while (Character.isDigit(source.charAt()))
+            // IMPLEMENT GETIDENTIFER
 
     }
     private boolean isAtEnd() {
         return current == sourceLen;
+    }
+
+    private char peek() {
+        if (isAtEnd()) {
+            return '\0';
+        }
+        return source.charAt(current);
     }
 
     private char advance() {
